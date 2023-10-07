@@ -27,7 +27,6 @@ namespace AlgorithmsWebAPI.Controllers
         [Route("BubbleSort")]
         public async Task<string[]> BubbleSort(string array)
         {
-            _pageRankService.pageRank();
             return await _bubbleSortService.Sort(array);
         }
 
@@ -53,6 +52,13 @@ namespace AlgorithmsWebAPI.Controllers
         {
             _dfsService.Search("sea");
             return "dfs girdi";
+        }
+
+        [HttpGet]
+        [Route("PageRank")]
+        public void PageRank()
+        {
+            _pageRankService.pageRank();
         }
     }
 }
