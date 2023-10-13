@@ -1,4 +1,5 @@
-﻿using AlgorithmsWebAPI.Entities;
+﻿using AlgorithmsWebAPI.DTO;
+using AlgorithmsWebAPI.Entities;
 using AlgorithmsWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +7,9 @@ namespace AlgorithmsWebAPI.Services
 {
     public interface IPageRankService
     {
-        void pageRank();
+        List<Dictionary<string, List<string>>> GetData(string mostValuable);
+        PageRankDTO pageRank(string selection);
+        
     }
     public class PageRankService : IPageRankService
     {
@@ -17,12 +20,13 @@ namespace AlgorithmsWebAPI.Services
         //    _context = context;
         //}
         
-        public void pageRank()
+        public PageRankDTO pageRank(string selection)
         {
             var data = new List<Dictionary<string, List<string>>>();
             var ranks = new Dictionary<string, double>();
+            var pageRankDTO = new PageRankDTO();
 
-            data = GetData("A");
+            data = GetData(selection);
             var dicIncoming = data[0];
             var dicOutgoing = data[1];
             ranks = GetRank();
@@ -46,26 +50,31 @@ namespace AlgorithmsWebAPI.Services
                 };
                 Console.WriteLine("");
             };
+
+            pageRankDTO.rankList = ranks;
+            pageRankDTO.outGoings = dicOutgoing;
+            pageRankDTO.inComings = dicIncoming;
+            return pageRankDTO;
         }
 
-        private List<Dictionary<string, List<string>>> GetData(string mostValuable)
+        public List<Dictionary<string, List<string>>> GetData(string mostValuable)
         {
             List<Dictionary<string, List<string>>> data = new List<Dictionary<string,List<string>>>();
             if (mostValuable == "A" || mostValuable == "a")
             {
                 Dictionary<string, List<string>> dicIncoming = new Dictionary<string, List<string>>()
                 {
-                    { "A", new List<string>{"B", "D" } },
-                    { "B", new List<string>{"A", "C", "D" } },
-                    { "C", new List<string>{"A" } },
-                    { "D", new List<string>{"A", "C" } },
+                    { "A", new List<string>{"B", "D", "C"} },
+                    { "B", new List<string>{"A" } },
+                    { "C", new List<string>{ } },
+                    { "D", new List<string>{"C" } },
                 };
                 Dictionary<string, List<string>> dicOutgoing = new Dictionary<string, List<string>>()
                 {
-                    { "A", new List<string>{"A", "B", "C", "D"} },
+                    { "A", new List<string>{"B"} },
                     { "B", new List<string>{"A" } },
-                    { "C", new List<string>{"B", "D"} },
-                    { "D", new List<string>{"A", "B" } },
+                    { "C", new List<string>{"A", "D"} },
+                    { "D", new List<string>{"A" } },
                 };
                 data.Add(dicIncoming);
                 data.Add(dicOutgoing);
@@ -81,10 +90,10 @@ namespace AlgorithmsWebAPI.Services
                 };
                 Dictionary<string, List<string>> dicOutgoing = new Dictionary<string, List<string>>()
                 {
-                    { "A", new List<string>{"A", "B", "C", "D"} },
-                    { "B", new List<string>{"D" } },
+                    { "A", new List<string>{"B", "C", "D"} },
+                    { "B", new List<string>{"A", "D"} },
                     { "C", new List<string>{"B", "D"} },
-                    { "D", new List<string>{"A", "B" } },
+                    { "D", new List<string>{ } },
                 };
                 data.Add(dicIncoming);
                 data.Add(dicOutgoing);

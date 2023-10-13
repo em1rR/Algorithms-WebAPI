@@ -1,4 +1,5 @@
-﻿using AlgorithmsWebAPI.Services;
+﻿using AlgorithmsWebAPI.DTO;
+using AlgorithmsWebAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AlgorithmsWebAPI.Controllers
@@ -56,9 +57,19 @@ namespace AlgorithmsWebAPI.Controllers
 
         [HttpGet]
         [Route("PageRank")]
-        public void PageRank()
+        public PageRankDTO PageRank([FromQuery] string selection)
         {
-            _pageRankService.pageRank();
+            return _pageRankService.pageRank(selection);
+            //return "ss";
+        }
+
+        [HttpGet]
+        [Route("GetData")]
+        public DataDTO GetData([FromQuery] string selection)
+        {
+            DataDTO data = new DataDTO();
+            data.DataSet = _pageRankService.GetData(selection);
+            return data;
         }
     }
 }
