@@ -29,8 +29,10 @@ namespace AlgorithmsWebAPI.Services
             data = GetData(selection);
             var dicIncoming = data[0];
             var dicOutgoing = data[1];
-            ranks = GetRank();
-
+            if(selection == "D" || selection == "d")
+                ranks = GetRank();
+            else
+                 ranks = GetRank100();
             double dampingFactor = 0.85;
             int iteration = 20;
 
@@ -62,20 +64,45 @@ namespace AlgorithmsWebAPI.Services
             List<Dictionary<string, List<string>>> data = new List<Dictionary<string,List<string>>>();
             if (mostValuable == "A" || mostValuable == "a")
             {
-                Dictionary<string, List<string>> dicIncoming = new Dictionary<string, List<string>>()
+                //Dictionary<string, List<string>> dicIncoming = new Dictionary<string, List<string>>()
+                //{
+                //    { "A", new List<string>{"B", "D", "C"} },
+                //    { "B", new List<string>{"A" } },
+                //    { "C", new List<string>{ } },
+                //    { "D", new List<string>{"C" } },
+                //};
+                //Dictionary<string, List<string>> dicOutgoing = new Dictionary<string, List<string>>()
+                //{
+                //    { "A", new List<string>{"B"} },
+                //    { "B", new List<string>{"A" } },
+                //    { "C", new List<string>{"A", "D"} },
+                //    { "D", new List<string>{"A" } },
+                //};
+                Dictionary<string, List<string>> dicIncoming = new Dictionary<string, List<string>>();
+                Dictionary<string, List<string>> dicOutgoing = new Dictionary<string, List<string>>();
+                for (int i = 0; i < 100; i++)
                 {
-                    { "A", new List<string>{"B", "D", "C"} },
-                    { "B", new List<string>{"A" } },
-                    { "C", new List<string>{ } },
-                    { "D", new List<string>{"C" } },
-                };
-                Dictionary<string, List<string>> dicOutgoing = new Dictionary<string, List<string>>()
-                {
-                    { "A", new List<string>{"B"} },
-                    { "B", new List<string>{"A" } },
-                    { "C", new List<string>{"A", "D"} },
-                    { "D", new List<string>{"A" } },
-                };
+                    string node = "Node" + i;
+                    List<string> incomingLinks = new List<string>();
+                    List<string> outgoingLinks = new List<string>();
+
+                    // Rastgele gelen bağlantılar ekleyelim (örneğin, 2 ile 5 arasında rastgele sayıda gelen bağlantı)
+                    int numIncomingLinks = new Random().Next(2, 6);
+                    for (int j = 0; j < numIncomingLinks; j++)
+                    {
+                        incomingLinks.Add("Node" + new Random().Next(0, 100));
+                    }
+
+                    // Rastgele çıkan bağlantılar ekleyelim
+                    int numOutgoingLinks = new Random().Next(2, 6);
+                    for (int j = 0; j < numOutgoingLinks; j++)
+                    {
+                        outgoingLinks.Add("Node" + new Random().Next(0, 100));
+                    }
+
+                    dicIncoming[node] = incomingLinks;
+                    dicOutgoing[node] = outgoingLinks;
+                }
                 data.Add(dicIncoming);
                 data.Add(dicOutgoing);
             }
@@ -110,6 +137,15 @@ namespace AlgorithmsWebAPI.Services
                 { "C", 0.25 },
                 { "D", 0.25 },
             };
+            return ranks;
+        }
+        private Dictionary<string, double> GetRank100()
+        {
+            Dictionary<string, double> ranks = new Dictionary<string, double>();
+            for (int i = 0; i < 100; i++)
+            {
+                ranks.Add("Node" + i, 0.25);
+            }
             return ranks;
         }
 

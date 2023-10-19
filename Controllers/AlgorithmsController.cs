@@ -71,5 +71,6 @@ namespace AlgorithmsWebAPI.Controllers
             data.DataSet = _pageRankService.GetData(selection);
             return data;
         }
+
     }
 }
