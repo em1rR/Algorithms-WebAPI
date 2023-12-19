@@ -16,7 +16,8 @@ namespace AlgorithmsWebAPI.Controllers
         private readonly IPageRankService _pageRankService;
         private readonly IKMeansService _kMeansService;
         private readonly IKNNService _kNNService;
-        public AlgorithmsController(IBubbleSortService bubbleSortService, ISelectionSortService selectionSortService, IInsertionSortService insertionSortService, IDFSService dfsService, IPageRankService pageRankService, IKMeansService kMeansService, IKNNService kNNService)
+        private readonly ILinearRegressionService _linearRegressionService;
+        public AlgorithmsController(IBubbleSortService bubbleSortService, ISelectionSortService selectionSortService, IInsertionSortService insertionSortService, IDFSService dfsService, IPageRankService pageRankService, IKMeansService kMeansService, IKNNService kNNService, ILinearRegressionService linearRegressionService)
         {
             _bubbleSortService = bubbleSortService;
             _selectionSortService = selectionSortService;
@@ -25,6 +26,7 @@ namespace AlgorithmsWebAPI.Controllers
             _pageRankService = pageRankService;
             _kMeansService = kMeansService;
             _kNNService = kNNService;
+            _linearRegressionService = linearRegressionService;
 
         }
 
@@ -85,12 +87,13 @@ namespace AlgorithmsWebAPI.Controllers
         #region K-Means
         [HttpGet]
         [Route("K-Means")]
-        public string GetKMeans()
+        //public string GetKMeans()
+        public List<Cluster> GetKMeans()
         {
             List<Cluster> clusters;
             clusters = _kMeansService.StartVer();
             
-            return "k-means";
+            return clusters;
         }
         #endregion
 
@@ -104,6 +107,47 @@ namespace AlgorithmsWebAPI.Controllers
             _kNNService.StartVer(clusters);
 
             return "kNN";
+        }
+        #endregion
+
+        #region LinearRegression
+        [HttpGet]
+        [Route("LinearRegression/GetRawData")]
+        public RawDataDTO GetRawData()
+        {
+            var rawData = _linearRegressionService.RawData();
+
+            RawDataDTO data = new RawDataDTO();
+            data.X = rawData.X;
+            data.Y = rawData.Y;
+
+            return data;
+        }
+
+        [HttpGet]
+        [Route("LinearRegression/GetLinearLine")]
+        public LineDataDTO GetLine()
+        {
+            var rawData = _linearRegressionService.RawData();
+            var lineData = _linearRegressionService.TrainLinearRegressionModel(rawData.X, rawData.Y);
+
+            LineDataDTO data = new LineDataDTO();
+            data.Intercept = lineData.intercept;
+            data.Slope = lineData.slope;
+            return data;
+        }
+
+        [HttpGet]
+        [Route("LinearRegression/MakePrediction")]
+        public double MakePrediction([FromQuery] double x)
+        {
+            //var rawData = _linearRegressionService.RawData();
+            //var lineData = _linearRegressionService.TrainLinearRegressionModel(rawData.X, rawData.Y);
+            double data = _linearRegressionService.StartVer(x);
+            //LineDataDTO data = new LineDataDTO();
+            //data.Intercept = lineData.intercept;
+            //data.Slope = lineData.slope;
+            return data;
         }
         #endregion
     }

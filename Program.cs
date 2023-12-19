@@ -15,6 +15,7 @@ builder.Services.AddScoped<IDFSService, DFSService>();
 builder.Services.AddScoped<IPageRankService, PageRankService>();
 builder.Services.AddScoped<IKMeansService, KMeansService>();
 builder.Services.AddScoped<IKNNService, KNNService>();
+builder.Services.AddScoped<ILinearRegressionService, LinearRegressionService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
