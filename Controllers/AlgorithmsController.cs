@@ -74,7 +74,7 @@ namespace AlgorithmsWebAPI.Controllers
             //return "ss";
         }
         #endregion
-        
+
         [HttpGet]
         [Route("GetData")]
         public DataDTO GetData([FromQuery] string selection)
@@ -85,6 +85,18 @@ namespace AlgorithmsWebAPI.Controllers
         }
 
         #region K-Means
+
+
+        [HttpGet]
+        [Route("K-Means-GetData")]
+        public List<Point> GetKMeansData()
+        {
+            List<Point> result;
+            result = _kMeansService.GenerateData();
+
+            return result;
+        }
+
         [HttpGet]
         [Route("K-Means")]
         //public string GetKMeans()
@@ -92,12 +104,23 @@ namespace AlgorithmsWebAPI.Controllers
         {
             List<Cluster> clusters;
             clusters = _kMeansService.StartVer();
-            
+
             return clusters;
         }
         #endregion
 
         #region KNN
+        [HttpGet]
+        [Route("KNN")]
+        public string GetKNN(List<Cluster> clusters, Point point)
+        {
+            //List<Cluster> clusters;
+            //clusters = _kMeansService.StartVer();
+            _kNNService.StartVer(clusters);
+
+            return "kNN";
+        }
+
         [HttpGet]
         [Route("KNN")]
         public string GetKNN()
@@ -149,6 +172,26 @@ namespace AlgorithmsWebAPI.Controllers
             //data.Slope = lineData.slope;
             return data;
         }
+
+        [HttpGet]
+        [Route("LinearRegression/GetLinearLinePoints")]
+        public List<Point> GetLinePoints()
+        {
+            var rawData = _linearRegressionService.RawData();
+            var lineData = _linearRegressionService.TrainLinearRegressionModel(rawData.X, rawData.Y);
+
+            var result = new List<Point>();
+            //data.Intercept = lineData.intercept;
+            //data.Slope = lineData.slope;
+
+
+            result.Add(new Point(1, (1 * lineData.slope + lineData.intercept)));
+            //y = mx + k
+            result.Add(new Point(19, (19 * lineData.slope + lineData.intercept)));
+
+            return result;
+        }
+
         #endregion
     }
 }

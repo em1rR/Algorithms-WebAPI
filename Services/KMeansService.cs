@@ -5,6 +5,7 @@ namespace AlgorithmsWebAPI.Services
     public interface IKMeansService
     {
         List<Cluster> StartVer();
+        List<Point> GenerateData();
     }
     public class KMeansService : IKMeansService
     {
@@ -29,7 +30,7 @@ namespace AlgorithmsWebAPI.Services
             return clusters;
         }
 
-        private static List<Point> GenerateData()
+        public List<Point> GenerateData()
         {
             List<Point> dataPoints = new List<Point>();
             // Örnek veri noktalarını burada oluşturun

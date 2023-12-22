@@ -84,6 +84,8 @@ namespace AlgorithmsWebAPI.Services
             Console.WriteLine($"En büyük değer: {maxValue}, Anahtar: {maxKey}");
 
         }
+
+
         static string GetLabel(Point _point)
         {
             string label = "";
