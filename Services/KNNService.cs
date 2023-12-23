@@ -4,22 +4,23 @@ namespace AlgorithmsWebAPI.Services
 {
     public interface IKNNService
     {
-        void StartVer(List<Cluster> clusters);
+        string StartVer(List<Cluster> clusters, Point newPoint);
     }
     public class KNNService : IKNNService
     {
         static private List<Cluster>? _clusters;
-        public void StartVer(List<Cluster> clusters)
+        static private string? _clusterName;
+        public string StartVer(List<Cluster> clusters, Point newPoint)
         {
             _clusters = clusters;
             // Yeni veri noktası
-            Point newPoint = new Point(4, 6);
+            //Point newPoint = new Point(4, 6);
 
             // k-NN algoritmasıyla en yakın 3 noktayı bul
             int k = 3;
-            clusters[0].Name = "Cluster1";
-            clusters[1].Name = "Cluster2";
-            clusters[2].Name = "Cluster3";
+            //clusters[0].Name = "Cluster1";
+            //clusters[1].Name = "Cluster2";
+            //clusters[2].Name = "Cluster3";
             List<Point> nearestNeighbors = KNearestNeighbors(newPoint, k);
 
             // En yakın noktaları ekrana yazdır
@@ -29,6 +30,8 @@ namespace AlgorithmsWebAPI.Services
             {
                 Console.WriteLine($"({neighbor.X}, {neighbor.Y})");
             }
+
+            return _clusterName;
         }
 
         static List<Point> dataPoints = new List<Point>
@@ -82,6 +85,7 @@ namespace AlgorithmsWebAPI.Services
 
             string maxKey = maxEntry.Key;
             Console.WriteLine($"En büyük değer: {maxValue}, Anahtar: {maxKey}");
+            _clusterName = maxKey;
 
         }
 

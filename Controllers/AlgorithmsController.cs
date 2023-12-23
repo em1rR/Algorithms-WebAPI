@@ -29,7 +29,7 @@ namespace AlgorithmsWebAPI.Controllers
             _linearRegressionService = linearRegressionService;
 
         }
-
+        static List<Cluster> clusters = null;
         #region BubbleSort
 
         [HttpPost]
@@ -102,7 +102,7 @@ namespace AlgorithmsWebAPI.Controllers
         //public string GetKMeans()
         public List<Cluster> GetKMeans()
         {
-            List<Cluster> clusters;
+            //List<Cluster> clusters;
             clusters = _kMeansService.StartVer();
 
             return clusters;
@@ -112,25 +112,27 @@ namespace AlgorithmsWebAPI.Controllers
         #region KNN
         [HttpGet]
         [Route("KNN")]
-        public string GetKNN(List<Cluster> clusters, Point point)
+        //public string GetKNN(Point point)
+        public string GetKNN([FromQuery] Point point)
         {
             //List<Cluster> clusters;
-            //clusters = _kMeansService.StartVer();
-            _kNNService.StartVer(clusters);
+            if(clusters == null)
+                clusters = _kMeansService.StartVer();
+            return _kNNService.StartVer(clusters, point);
 
-            return "kNN";
+            //return "kNN";
         }
 
-        [HttpGet]
-        [Route("KNN")]
-        public string GetKNN()
-        {
-            List<Cluster> clusters;
-            clusters = _kMeansService.StartVer();
-            _kNNService.StartVer(clusters);
+        //[HttpGet]
+        //[Route("KNN")]
+        //public string GetKNN()
+        //{
+        //    List<Cluster> clusters;
+        //    clusters = _kMeansService.StartVer();
+        //    _kNNService.StartVer(clusters);
 
-            return "kNN";
-        }
+        //    return "kNN";
+        //}
         #endregion
 
         #region LinearRegression

@@ -5,6 +5,10 @@
         public double X { get; set; }
         public double Y { get; set; }
 
+        public Point()
+        {
+            // Parametre almayan bir yapıcı metot ekleyin.
+        }
         public Point(double x, double y)
         {
             X = x;
