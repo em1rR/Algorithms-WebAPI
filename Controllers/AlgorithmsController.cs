@@ -17,7 +17,8 @@ namespace AlgorithmsWebAPI.Controllers
         private readonly IKMeansService _kMeansService;
         private readonly IKNNService _kNNService;
         private readonly ILinearRegressionService _linearRegressionService;
-        public AlgorithmsController(IBubbleSortService bubbleSortService, ISelectionSortService selectionSortService, IInsertionSortService insertionSortService, IDFSService dfsService, IPageRankService pageRankService, IKMeansService kMeansService, IKNNService kNNService, ILinearRegressionService linearRegressionService)
+        private readonly IAprioriService _aprioriService;
+        public AlgorithmsController(IBubbleSortService bubbleSortService, ISelectionSortService selectionSortService, IInsertionSortService insertionSortService, IDFSService dfsService, IPageRankService pageRankService, IKMeansService kMeansService, IKNNService kNNService, ILinearRegressionService linearRegressionService, IAprioriService aprioriService)
         {
             _bubbleSortService = bubbleSortService;
             _selectionSortService = selectionSortService;
@@ -27,7 +28,7 @@ namespace AlgorithmsWebAPI.Controllers
             _kMeansService = kMeansService;
             _kNNService = kNNService;
             _linearRegressionService = linearRegressionService;
-
+            _aprioriService = aprioriService;
         }
         static List<Cluster> clusters = null;
         #region BubbleSort
@@ -100,10 +101,10 @@ namespace AlgorithmsWebAPI.Controllers
         [HttpGet]
         [Route("K-Means")]
         //public string GetKMeans()
-        public List<Cluster> GetKMeans()
+        public List<Cluster> GetKMeans([FromQuery] int clusterNumber)
         {
             //List<Cluster> clusters;
-            clusters = _kMeansService.StartVer();
+            clusters = _kMeansService.StartVer(clusterNumber);
 
             return clusters;
         }
@@ -111,12 +112,32 @@ namespace AlgorithmsWebAPI.Controllers
 
         #region KNN
         [HttpGet]
+        [Route("KNNWithNewValue")]
+        //public string GetKNN(Point point)
+        public string GetKNNWithNewValue([FromQuery] Point point)
+        {
+            //List<Cluster> clusters;
+            if(clusters == null)
+                clusters = _kMeansService.StartVer();
+            var clusterName = _kNNService.StartVer(clusters, point);
+
+            if(clusterName == "Cluster1")
+                   clusters[0].Points.Add(point);
+            else if (clusterName == "Cluster2")
+                clusters[1].Points.Add(point);
+            else if (clusterName == "Cluster3")
+                clusters[2].Points.Add(point);
+            return clusterName;
+            //return "kNN";
+        }
+
+        [HttpGet]
         [Route("KNN")]
         //public string GetKNN(Point point)
         public string GetKNN([FromQuery] Point point)
         {
             //List<Cluster> clusters;
-            if(clusters == null)
+            if (clusters == null)
                 clusters = _kMeansService.StartVer();
             return _kNNService.StartVer(clusters, point);
 
@@ -194,6 +215,19 @@ namespace AlgorithmsWebAPI.Controllers
             return result;
         }
 
+        #endregion
+
+        #region Apriori
+        [HttpGet]
+        [Route("Apriori")]
+        //public string GetKNN(Point point)
+        public string GetApriori()
+        {
+            
+            _aprioriService.StartVer();
+
+            return "apriori";
+        }
         #endregion
     }
 }

@@ -5,6 +5,7 @@ namespace AlgorithmsWebAPI.Services
     public interface IKMeansService
     {
         List<Cluster> StartVer();
+        List<Cluster> StartVer(int clusterNumber);
         List<Point> GenerateData();
     }
     public class KMeansService : IKMeansService
@@ -13,7 +14,29 @@ namespace AlgorithmsWebAPI.Services
         public List<Cluster> StartVer()
         {
             List<Point> dataPoints = GenerateData();
-            int k = 3;
+            int k = 3; // default value
+            List<Point> initialCentroids = InitializeCentroids(dataPoints, k);
+            List<Cluster> clusters = KMeans(dataPoints, initialCentroids);
+
+            for (int i = 0; i < clusters.Count; i++)
+            {
+                Console.WriteLine($"Cluster {i + 1}:");
+                foreach (var point in clusters[i].Points)
+                {
+                    Console.WriteLine($"({point.X}, {point.Y})");
+                }
+                Console.WriteLine();
+            }
+
+            return clusters;
+        }
+
+        public List<Cluster> StartVer(int clusterNumber)
+        {
+            List<Point> dataPoints = GenerateData();
+            int k = 3; // default value
+            if (clusterNumber != 0)
+                k = clusterNumber;
             List<Point> initialCentroids = InitializeCentroids(dataPoints, k);
             List<Cluster> clusters = KMeans(dataPoints, initialCentroids);
 

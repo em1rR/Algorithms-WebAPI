@@ -39,55 +39,116 @@ namespace AlgorithmsWebAPI.Services
             new Point(8, 7), new Point(9, 9), new Point(5, 5), new Point(6, 8),
             new Point(1, 2), new Point(2, 3), new Point(3, 4),
             new Point(12, 13), new Point(15, 16), new Point(10, 12)
-        };      
+        };
 
         // k-NN algoritması
+        //static List<Point> KNearestNeighbors(Point newPoint, int k)
+        //{
+        //    // Yeni veri noktasının mesafelerini hesapla ve sırala
+        //    dataPoints.Sort((p1, p2) => Distance(p1, newPoint).CompareTo(Distance(p2, newPoint)));
+
+        //    // En yakın k noktayı al
+        //    List<Point> nearestNeighbors = dataPoints.GetRange(0, Math.Min(k, dataPoints.Count));
+
+        //    Voting(nearestNeighbors);
+        //    return nearestNeighbors;
+
+        //}
+
         static List<Point> KNearestNeighbors(Point newPoint, int k)
         {
-            // Yeni veri noktasının mesafelerini hesapla ve sırala
-            dataPoints.Sort((p1, p2) => Distance(p1, newPoint).CompareTo(Distance(p2, newPoint)));
+            // Tüm noktaların bir listesi olmalı, örnek olarak 'allPoints' kullanalım
+            List<Point> allPoints = new List<Point>();
 
-            // En yakın k noktayı al
-            List<Point> nearestNeighbors = dataPoints.GetRange(0, Math.Min(k, dataPoints.Count));
+            foreach (var cluster in _clusters)
+            {
+                allPoints.AddRange(cluster.Points);
+            }
 
-            Voting(nearestNeighbors);
-            return nearestNeighbors;
+            // Tüm noktaların, yeni noktaya göre olan uzaklıklarını hesapla ve sırala
+            allPoints.Sort((p1, p2) => Distance(p1, newPoint).CompareTo(Distance(p2, newPoint)));
+
+            // En yakın 3 noktayı al
+            List<Point> nearestPoints = allPoints.Take(k).ToList();
+            Voting(nearestPoints);
+            return nearestPoints;
         }
+
+
+
+
+
+        //static void Voting(List<Point> nearestNeighbors)
+        //{
+        //    //foreach (Point neighbor in nearestNeighbors)
+        //    //{
+        //    //    string label = neighbor.ToString();
+        //    //    foreach(Cluster cluster in clusters)
+        //    //    {
+        //    //        foreach(Point point in cluster.Points)
+        //    //        {
+        //    //            if(neighbor == point)
+        //    //            {
+
+        //    //            }
+        //    //        }
+        //    //    }
+        //    //}
+        //    Dictionary<string, int> classVotes = new Dictionary<string, int>();
+        //    foreach (Point neighbor in nearestNeighbors)
+        //    {
+        //        string label = GetLabel(neighbor); // Eğer etiketleriniz varsa burada ilgili fonksiyonu kullanabilirsiniz
+        //        if (!classVotes.ContainsKey(label))
+        //        {
+        //            classVotes[label] = 0;
+        //        }
+        //        classVotes[label]++;
+        //    }
+        //    KeyValuePair<string, int> maxEntry = classVotes.Aggregate((x, y) => x.Value > y.Value ? x : y);
+        //    int maxValue = maxEntry.Value;
+
+        //    string maxKey = maxEntry.Key;
+        //    Console.WriteLine($"En büyük değer: {maxValue}, Anahtar: {maxKey}");
+        //    _clusterName = maxKey;
+
+        //}
 
         static void Voting(List<Point> nearestNeighbors)
         {
-            //foreach (Point neighbor in nearestNeighbors)
-            //{
-            //    string label = neighbor.ToString();
-            //    foreach(Cluster cluster in clusters)
-            //    {
-            //        foreach(Point point in cluster.Points)
-            //        {
-            //            if(neighbor == point)
-            //            {
-
-            //            }
-            //        }
-            //    }
-            //}
             Dictionary<string, int> classVotes = new Dictionary<string, int>();
+
             foreach (Point neighbor in nearestNeighbors)
             {
-                string label = GetLabel(neighbor); // Eğer etiketleriniz varsa burada ilgili fonksiyonu kullanabilirsiniz
+                string label = GetLabelFromClusters(neighbor);
+
                 if (!classVotes.ContainsKey(label))
                 {
                     classVotes[label] = 0;
                 }
                 classVotes[label]++;
             }
+
             KeyValuePair<string, int> maxEntry = classVotes.Aggregate((x, y) => x.Value > y.Value ? x : y);
             int maxValue = maxEntry.Value;
-
             string maxKey = maxEntry.Key;
+
             Console.WriteLine($"En büyük değer: {maxValue}, Anahtar: {maxKey}");
             _clusterName = maxKey;
-
         }
+
+        static string GetLabelFromClusters(Point neighbor)
+        {
+            foreach (Cluster cluster in _clusters)
+            {
+                if (cluster.Points.Contains(neighbor))
+                {
+                    return cluster.Name;
+                }
+            }
+
+            return string.Empty; // Veya başka bir geri dönüş değeri
+        }
+
 
 
         static string GetLabel(Point _point)
